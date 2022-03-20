@@ -1,7 +1,9 @@
 package cn.ygzhangmfh.util.task;
 
 import cn.ygzhangmfh.util.task.support.DefaultThreadPool;
+import com.alibaba.ttl.TtlRunnable;
 
+import java.util.Objects;
 import java.util.concurrent.*;
 
 /**
@@ -12,7 +14,7 @@ import java.util.concurrent.*;
  */
 public class AsyncFactory {
 
-    private static ThreadPoolExecutor EXECUTOR;
+    private static ExecutorService EXECUTOR;
 
     private static AsyncConfig config;
 
@@ -31,7 +33,7 @@ public class AsyncFactory {
         }
 
         AsyncFutureTask<V> asyncFutureTask = new AsyncFutureTask<>(callable, taskName);
-        EXECUTOR.submit(asyncFutureTask);
+        EXECUTOR.submit(Objects.requireNonNull(TtlRunnable.get(asyncFutureTask)));
 
         return asyncFutureTask;
     }

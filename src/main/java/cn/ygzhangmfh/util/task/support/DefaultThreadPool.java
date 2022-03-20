@@ -1,13 +1,11 @@
 package cn.ygzhangmfh.util.task.support;
 
 import cn.ygzhangmfh.util.task.AsyncFutureTask;
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * DefaultThreadPool
@@ -19,7 +17,7 @@ public class DefaultThreadPool{
 
 	private static final Logger logger = LoggerFactory.getLogger(AsyncFutureTask.class);
 
-	public static ThreadPoolExecutor threadPoolExecutor(){
+	public static ExecutorService threadPoolExecutor(){
 
 		int processors = Runtime.getRuntime().availableProcessors();
 
@@ -30,11 +28,11 @@ public class DefaultThreadPool{
 		logger.info("ASYNC-TASK-POOL-THREAD init ：corePoolSize={},\nmaximumPoolSize={},\nkeepAliveTime={},\nblockSize={}"
 				, processors ,max ,keepAliveTime , blockSize);
 		
-		return new ThreadPoolExecutor(
+		return TtlExecutors.getTtlExecutorService( new ThreadPoolExecutor(
 				processors, max, 3600L, TimeUnit.SECONDS,
 				new ArrayBlockingQueue<>(200),
 				new DefaultThreadFactory(),
-				new DefaultPolicy());
+				new DefaultPolicy()));
 	}
 
 	public static class DefaultPolicy implements RejectedExecutionHandler {
